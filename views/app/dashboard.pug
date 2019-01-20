@@ -1,0 +1,103 @@
+doctype html
+html(lang="fr" ng-app="dashboard")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        link(href="/assets/css/bootstrap.min.css" rel="stylesheet")
+        link(href="/assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet")
+        link(href="/assets/css/Ionicons/css/ionicons.min.css" rel="stylesheet")
+        link(href="/assets/css/AdminLTE.min.css" rel="stylesheet")
+        link(href="/assets/css/_all-skins.min.css" rel="stylesheet")
+        link(href="/assets/css/morris.css" rel="stylesheet")
+        link(href="/assets/css/jquery-jvectormap.css" rel="stylesheet")
+        link(href="/assets/css/bootstrap3-wysihtml5.min.css" rel="stylesheet")
+        link(href="/assets/css/site.css" rel="stylesheet")
+        title EasyUML|Tableau de bord
+    body(class="skin-purple sidebar-mini")
+        div(class="wrapper")
+        header(class="main-header")
+            a(href="#" class="logo")
+                span(class="logo-mini")
+                    b E
+                    small uml
+                span(class="logo-lg")
+                    b Easy
+                    |UML
+            nav(class="navbar navbar-static-top")
+                a(href="#" class="sidebar-toggle" data-toggle="push-menu" role="button")
+                    span(class="sr-only") Toggle navigation
+                div(class="navbar-custom-menu")
+                    ul(class="nav navbar-nav")
+                        li(class="dropdown user user-menu")
+        aside(class="main-sidebar")
+            section(class="sidebar")
+                ul(class="sidebar-menu" data-widget="tree")
+                    li(class="header") NAVIGATION
+        div(class="content-wrapper")
+            section.content-header
+                h1 Vos diagrammes
+            section.content(ng-controller = "dashboardController as dashboard")
+                div.box
+                    div.box-content
+                        table(class="table table-bordered table-hover")
+                            thead
+                                tr
+                                    th Nom
+                                    th Créé le
+                                    th Action
+                            tbody
+                                each dia in data
+                                    tr
+                                        th=dia.nom
+                                        th=dia.date
+                                        th 
+                                            button(class="btn btn-danger btn-flat delete" ng-click="dashboard.delete($event)" style="margin-right : 7px;" value=dia.id) Supprimer
+                                            button(class="btn btn-primary btn-flat open" ng-click="dashboard.open($event)"  value=dia.id) Ouvrir
+                div
+                    a(href='/add')
+                        button(type="button" class="btn  btn-success btn-lg center-block" )
+                            i(class="fa fa-plus") 
+                            span Nouveau diagramme
+        footer(class="main-footer")
+            div(class="pull-right hidden-xs")
+                b Version
+                span  1.0.0
+            strong Copyright &copy; EasyUML. 
+            |All rights reserved.
+        div(class="control-sidebar-bg")
+        script(src="/assets/js/jquery.min.js")
+        script(src="/assets/js/jquery-ui.min.js")
+        script(src="/assets/js/bootstrap.min.js")
+        script(src="/assets/js/raphael.min.js")
+        script(src="/assets/js/morris.min.js")
+        script(src="/assets/js/jquery.sparkline.min.js")
+        script(src="/assets/js/jquery-jvectormap.js")
+        script(src="/assets/js/fastclick.js")
+        script(src="/assets/js/adminlte.min.js")
+        script(src="/assets/js/bootstrap3-wysihtml5.all.min.js")
+        script(src="/assets/js/site.js")
+        script(src="/assets/js/angular.js")
+        script(type="text/javascript").
+            angular.module('dashboard',[]).controller('dashboardController',function($scope,$http){
+                var dashboard = this;
+
+                dashboard.delete = function($event){
+                    $http({
+                        method:"POST",
+                        data:{"data":$event.target.value},
+                        url:"/delete"
+                    }).then(function mySuccess(response) {
+                            alert("Suppression réussie");
+                            window.location.reload();
+                        }, function myError(response) {
+                            alert("Une erreur s'est produite, veuillez contacter l'administrateur");
+                    });
+                }
+
+                dashboard.open=function($event){
+                    var id=$event.target.value;
+                    window.location.href = "/open/"+id;
+                }
+            });
+            

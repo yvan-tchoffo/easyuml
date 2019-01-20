@@ -1,0 +1,52 @@
+.body{
+    overflow: hidden;
+    font-family: Raleway, 'sans-serif';
+}
+
+input[type=text],input[type=password], select, textarea {
+    width: 350px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.button-container{
+    text-align: center;
+}
+label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+}
+
+input[type=submit] {
+    background-color: #61dafb;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.content{
+    height:100%;
+    padding-top: 200px;
+}
+
+form{
+    margin:auto;
+}
+
+header{
+    background-color:#20232a;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 10px 0px 5px 5%; 
+}
+
+@font-face {
+    font-family: 'Raleway';
+    src: url("../fonts/Raleway-Light.ttf");
+}

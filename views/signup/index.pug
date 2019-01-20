@@ -1,0 +1,44 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport")
+        link(href="/assets/css/bootstrap.min.css" rel="stylesheet")
+        link(href="/assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet")
+        link(href="/assets/css/Ionicons/css/ionicons.min.css" rel="stylesheet")
+        link(href="/assets/css/AdminLTE.min.css" rel="stylesheet")
+        link(href="/assets/css/_all-skins.min.css" rel="stylesheet")
+        link(href="/assets/css/morris.css" rel="stylesheet")
+        link(href="/assets/css/jquery-jvectormap.css" rel="stylesheet")
+        link(href="/assets/css/bootstrap3-wysihtml5.min.css" rel="stylesheet")
+        title EasyUML|Inscription
+    body(class="register-page")
+        div.register-box
+            div.register-logo
+                a(href="/")
+                b Easy
+                small UML
+            div.register-box-body(style="padding-left:40px; padding-right:40px;")
+                p(style="text-align:center;") Inscription
+                form(action = "/signup"  enctype="multipart/form-data" method="post" class="form-horizontal")
+                    div(class="form-group")
+                        input(type="text" class="form-control" name="nom" value=data.nom required placeholder="Votre nom")
+                    div(class="form-group")
+                        input(type="text" class="form-control" name="prenom" value=data.prenom required placeholder="Votre prénom")
+                    div(class="form-group")
+                        input(type="mail" class="form-control" name="mail" required value=data.mail placeholder="Votre adresse mail")
+                    div(class="form-group")
+                        input(type="text" class="form-control" name="login" required value=data.login placeholder="Votre nom d'utilisateur")
+                    div(class="form-group")
+                        input(type="password" class="form-control" name="pwd" required value=data.pwd placeholder="Entrez votre mot de passe")
+                    div(class="form-group")
+                        input(type="password" class="form-control" name="pwd2" required value=data.pwd2 placeholder="Resaisissez votre mot de passe")
+                    span(class="center-block" style="text-align: center;")
+                        input(type='checkbox' class = "revealpwd") 
+                        span  Afficher le mot de passe
+                    span(class="center-block" style="text-align:center; color:red;")=msg
+                    div(class="button-container row")
+                        button(type="submit" class="btn btn-primary btn-flat center-block" name="login-button") Inscription
+       
+
