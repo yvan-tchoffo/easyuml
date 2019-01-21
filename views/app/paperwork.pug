@@ -97,7 +97,6 @@ html(lang="fr" ng-app="paperwork")
                         }
                         else{
                             endlink = cellView.model;
-                            console.log(endlink);
                             var link = new joint.shapes.standard.Link();
                             link.source(startlink);
                             link.target(endlink);
@@ -123,13 +122,13 @@ html(lang="fr" ng-app="paperwork")
                 });
 
                 joint.shapes.html = {};
-                    joint.shapes.html.Element = joint.shapes.basic.Rect.extend({
-                        defaults: joint.util.deepSupplement({
-                            type: 'html.Element',
-                            attrs: {
-                                rect: { stroke: 'none', 'fill-opacity': 0 }
-                            }
-                        }, joint.shapes.basic.Rect.prototype.defaults)
+                joint.shapes.html.Element = joint.shapes.basic.Rect.extend({
+                    defaults: joint.util.deepSupplement({
+                        type: 'html.Element',
+                        attrs: {
+                            rect: { stroke: 'none', 'fill-opacity': 0 }
+                        }
+                    }, joint.shapes.basic.Rect.prototype.defaults)
                 });
 
                 joint.shapes.html.ElementView = joint.dia.ElementView.extend({
@@ -199,7 +198,7 @@ html(lang="fr" ng-app="paperwork")
                     }
                     var jsonobject = graph.toJSON();
                     var jsonstring = JSON.stringify(jsonobject);
-                    console.log(jsonstring);
+                    //- console.log(jsonstring);
                     $http({
                         method:"POST",
                         data:{"data":jsonstring,"newdia":newdia,"name":name},
@@ -221,7 +220,7 @@ html(lang="fr" ng-app="paperwork")
                     });
 
                     graph.addCells([el1]);
-                    console.log(graph);
+                    //- console.log(graph);
 
                 };
 
@@ -242,7 +241,6 @@ html(lang="fr" ng-app="paperwork")
                 if(data != -1){
                     data = JSON.parse(data);
                     done = [];
-                    //- console.log(data.cells);
                     for(var j = 0; j!=data.cells.length; j++){
                         cell = data.cells[j];
                         if(cell.type == "standard.Link"){
@@ -265,6 +263,7 @@ html(lang="fr" ng-app="paperwork")
                                 link.source(source);
                             }else{
                                 var el1 = new joint.shapes.html.Element({
+                                    id: source,
                                     position: data.cells.find(function(element){
                                         if(element.id == source)
                                         return element;
@@ -282,16 +281,14 @@ html(lang="fr" ng-app="paperwork")
                                 });
                                 graph.addCells([el1]);
                                 link.source(el1);
-                                done.push(data.cells.find(function(element){
-                                        if(element.id == source)
-                                        return element;
-                                }));
+                                done.push(el1);
                             }
 
                             if(targetflag){
                                 link.target(target);
                             }else{
                                 var el2 = new joint.shapes.html.Element({
+                                    id:target,
                                     position: data.cells.find(function(element){
                                         if(element.id == target)
                                         return element;
@@ -309,88 +306,14 @@ html(lang="fr" ng-app="paperwork")
                                 });
                                 graph.addCells([el2]);
                                 link.target(el2);
-                                done.push(data.cells.find(function(element){
-                                        if(element.id == target)
-                                        return element;
-                                }));
+                                done.push(el2);
                             }
                             link.addTo(graph);
                         }
-                        console.log(done);
                         
                     }
 
-
-
-
-                    //- data.cells.forEach(function(cell){
-                    //-     if(cell.type == "standard.Link"){
-                    //-         console.log("Link is");
-                    //-         console.log(cell);
-                    //-         console.log("done length: "+done.length);
-                    //-         var link = new joint.shapes.standard.Link();
-                    //-         var source = cell.source;
-                    //-         var target = cell.target;
-                    //-         var sourceflag = false;
-                    //-         var targetflag = false;
-                    //-         for(i=0;i!=done.length;i++){
-                    //-             if(done[i].id == source.id){
-                    //-                 sourceflag = true;
-                    //-                 source = done[i];
-                    //-             }
-                    //-             if(done[i].id == target.id){
-                    //-                 targetflag = true;
-                    //-                 target = done[i];
-                    //-             }
-                    //-         }
-                    //-         if(sourceflag){
-                    //-             source  = data.find(function(element){
-                    //-                 if(element.id = source.id )
-                    //-                     return element;
-                    //-             })
-                    //-             link.source(source);
-                    //-         }else{
-                    //-             var el1 = new joint.shapes.html.Element({
-                    //-                 position: cell.source.position,
-                    //-                 size: cell.source.size,
-                    //-                 item1:cell.source.item1,
-                    //-             });
-                    //-             done.push(cell.source);
-                    //-             graph.addCells([el1]);
-                    //-         }
-
-                    //-         if(targetflag){
-                    //-             target  = data.find(function(element){
-                    //-                 if(element.id = target.id )
-                    //-                     return element;
-                    //-             })
-                    //-             link.target(target);
-                    //-         }else{
-                    //-             var el2 = new joint.shapes.html.Element({
-                    //-                 position: cell.target.position,
-                    //-                 size: cell.target.size,
-                    //-                 item1:cell.target.item1,
-                    //-             });
-                    //-             done.push(cell.target);
-                    //-             graph.addCells([el2]);
-                    //-         }
-                    //-         link.addTo(graph);
-                    //-     }
-                    //-     //- else{
-                    //-     //-     var el1 = new joint.shapes.html.Element({
-                    //-     //-         position: cell.position,
-                    //-     //-         size: cell.size,
-                    //-     //-         item1:cell.item1,
-                    //-     //-     });
-                    //-     //-     graph.addCells([el1]);
-                    //-     //- }
-
-                    //- },paperwork);
-                    //- console.log(data);
                 }
-
-
-
             });
 
 
