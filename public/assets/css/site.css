@@ -181,6 +181,14 @@ a.desc:after {
     pointer-events: none;
 }
 
+.tools i{
+    font-size:21px;
+}
+
+.toolbox th, .toolbox td{
+    text-align: center;
+}
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

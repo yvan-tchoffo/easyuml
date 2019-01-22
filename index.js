@@ -11,6 +11,7 @@ var upload = multer();
 app.set('view engine', 'pug');
 app.set('views','./views');
 app.use(express.static('public'));
+app.use('/scripts', express.static('node_modules'));
 app.use(session({secret: "@easyumlsessionkey"}));
 app.use('/login',login);
 app.use('/signup',signup);
@@ -54,6 +55,7 @@ app.post('/save',function(req,res,next){
             if(err)
                 res.send(err);
             else
+                // req.session.diagramme = 
                 res.send("ok");
         });
     }
