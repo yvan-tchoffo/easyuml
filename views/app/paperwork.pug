@@ -117,9 +117,17 @@ html(lang="fr" ng-app="paperwork")
                         }
                         else{
                             endlink = cellView.model;
-                            var link = new joint.shapes.standard.Link();
+                            var link = new joint.shapes.custom.links.Normal();
                             link.source(startlink);
                             link.target(endlink);
+                            link.appendLabel({
+                                attrs:{
+                                    label:{
+                                        text:'TEEEEEXT'
+                                    }
+                                }
+                            });
+                            console.log(link);
                             link.addTo(graph);
                             linkflag = false;
                             document.getElementById("newlink").style=passivecolor;
@@ -131,27 +139,37 @@ html(lang="fr" ng-app="paperwork")
                     }
 
                 });
+
+                paper.on('link:pointerdblclick',function(cellView){
+                    var label = prompt("Entrez le nom de la relation");
+                    cellView.model.label(0,{ attrs: { label: { text: label } } });
+                })
                     
                 paper.on('cell:pointerdblclick', function(cellView) {
+                    if(cellView.model.isElement()){
                         var obj = cellView.$box;
                         obj.find(".class-name input").focus();
+                    }
                 });
 
                 paper.on('blank:pointerclick', function() {
                         $("input").blur();
                 });
 
-                joint.shapes.html = {};
-                joint.shapes.html.Element = joint.shapes.basic.Rect.extend({
+
+
+
+                joint.shapes.class = {};
+                joint.shapes.class.Element = joint.shapes.basic.Rect.extend({
                     defaults: joint.util.deepSupplement({
-                        type: 'html.Element',
+                        type: 'class.Element',
                         attrs: {
                             rect: { stroke: 'none', 'fill-opacity': 0 }
                         }
                     }, joint.shapes.basic.Rect.prototype.defaults)
                 });
 
-                joint.shapes.html.ElementView = joint.dia.ElementView.extend({
+                joint.shapes.class.ElementView = joint.dia.ElementView.extend({
                     template:[
                         '<div class="class-box container">',
                             '<div class="row class-name"><input style="margin:auto;"" class="name" type="text" value="classname" /></div>',
@@ -213,6 +231,53 @@ html(lang="fr" ng-app="paperwork")
                     },
                 });
 
+                joint.shapes.standard.Link.define('custom.links.Normal', {
+                    attrs: {
+                        line: {
+                            stroke: 'black',
+                            strokeWidth: 2,
+                            targetMarker: {
+                                'type': 'path',
+                                'width': 10,
+                                'height': 20,
+                                'y': -10,
+                            }
+                        }
+                    },
+                    defaultLabel: {
+                        markup: [
+                            {
+                                tagName: 'rect',
+                                selector: 'body'
+                            }, {
+                                tagName: 'text',
+                                selector: 'label'
+                            }
+                        ],
+                        attrs: {
+                            label: {
+                                fill: 'black', // default text color
+                                fontSize: 12,
+                                textAnchor: 'middle',
+                                yAlignment: 'middle',
+                                pointerEvents: 'auto'
+                            },
+                            body: {
+                                ref: 'label',
+                                fill: 'white',
+                                stroke: 'white',
+                                strokeWidth: 2,
+                                refWidth: '120%',
+                                refHeight: '120%',
+                                refX: '-10%',
+                                refY: '-10%'
+                            }
+                        }
+                    }
+                }, {
+                    // inherit joint.shapes.standard.Link.markup
+                });
+
                 var paperwork = this;
                 paperwork.save=function($event){
                     newdia = $event.target.lastChild.value;
@@ -242,7 +307,7 @@ html(lang="fr" ng-app="paperwork")
 
                 paperwork.addclass=function($event){
                     $event.preventDefault();
-                    var el1 = new joint.shapes.html.Element({
+                    var el1 = new joint.shapes.class.Element({
                         position: { x: 80, y: 80 },
                         size: { width: 170, height: 100 },
                         name:"classname",
@@ -250,7 +315,6 @@ html(lang="fr" ng-app="paperwork")
                     });
 
                     graph.addCells([el1]);
-                    //- console.log(graph);
 
                 };
 
