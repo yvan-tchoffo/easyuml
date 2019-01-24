@@ -123,7 +123,7 @@ html(lang="fr" ng-app="paperwork")
                             link.appendLabel({
                                 attrs:{
                                     label:{
-                                        text:'TEEEEEXT'
+                                        text:'Relation'
                                     }
                                 }
                             });
@@ -153,7 +153,8 @@ html(lang="fr" ng-app="paperwork")
                 });
 
                 paper.on('blank:pointerclick', function() {
-                        $("input").blur();
+                        $("textarea").blur();
+                        $("focus").blur();
                 });
 
 
@@ -173,21 +174,24 @@ html(lang="fr" ng-app="paperwork")
                     template:[
                         '<div class="class-box container">',
                             '<div class="row class-name"><input style="margin:auto;"" class="name" type="text" value="classname" /></div>',
-                            '<div class="row class-item"><input class="item" data-key="0"  type="text"/></div>',
-                            '<div class="row class-item"><input class="item" data-key="1"  type="text"/></div>',
+                            '<div class="row class-item"><textarea class="items" data-key="0"></textarea></div>',
+                            '<div class="row class-item"><textarea class="fns" data-key="1"></textarea></div>',
                         '</div>'
                     ].join(''),
 
                     initialize: function(){
                         _.bindAll(this, 'updateBox');
-                        items=[];
                         joint.dia.ElementView.prototype.initialize.apply(this, arguments);
                         this.$box = $(_.template(this.template)());
 
-                        this.$box.find('.item').on('change', _.bind(function(evt) {
-                            key = evt.currentTarget.dataset.key;
-                            items[key]=$(evt.target).val();
-                            this.model.set('items',items);
+                        this.$box.find('.items').on('change', _.bind(function(evt) {
+                            items = $(evt.target).val();
+                            this.model.set('items',items);    
+                        }, this));
+
+                        this.$box.find('.fns').on('change', _.bind(function(evt) {
+                            fns = $(evt.target).val();
+                            this.model.set('fns',fns);    
                         }, this));
 
                         this.$box.find('.name').on('change',_.bind(function(evt){
@@ -218,9 +222,8 @@ html(lang="fr" ng-app="paperwork")
                         var bbox = this.model.getBBox();
                         var self = this;
                         this.$box.find('.name').val(this.model.get('name'));
-                        this.$box.find('.item').each(function(index){
-                            $(this).val(self.model.get('items')[index]);
-                        });
+                        this.$box.find('.items').val(this.model.get('items'));
+                        this.$box.find('.fns').val(this.model.get('fns'));
                         this.$box.css({
                             width: bbox.width,
                             height: bbox.height,
@@ -288,6 +291,7 @@ html(lang="fr" ng-app="paperwork")
                     }
                     var jsonobject = graph.toJSON();
                     var jsonstring = JSON.stringify(jsonobject);
+                    console.log(jsonstring);
                     $http({
                         method:"POST",
                         data:{"data":jsonstring,"newdia":newdia,"name":name},
@@ -311,7 +315,8 @@ html(lang="fr" ng-app="paperwork")
                         position: { x: 80, y: 80 },
                         size: { width: 170, height: 100 },
                         name:"classname",
-                        items:[]
+                        items:"",
+                        fns:'',
                     });
 
                     graph.addCells([el1]);
@@ -337,10 +342,17 @@ html(lang="fr" ng-app="paperwork")
                     done = [];
                     for(var j = 0; j!=data.cells.length; j++){
                         cell = data.cells[j];
-                        if(cell.type == "standard.Link"){
-                            var link = new joint.shapes.standard.Link();
+                        if(cell.type == "custom.links.Normal"){
+                            var link = new joint.shapes.custom.links.Normal();
                             var source = cell.source.id;
                             var target = cell.target.id;
+                            link.appendLabel({
+                                attrs:{
+                                    label:{
+                                        text:cell.labels[0].attrs.label.text
+                                    }
+                                }
+                            })
                             var sourceflag = false;
                             var targetflag = false;
                             for(i=0;i!=done.length;i++){
@@ -356,7 +368,7 @@ html(lang="fr" ng-app="paperwork")
                             if(sourceflag){
                                 link.source(source);
                             }else{
-                                var el1 = new joint.shapes.html.Element({
+                                var el1 = new joint.shapes.class.Element({
                                     id: source,
                                     position: data.cells.find(function(element){
                                         if(element.id == source)
@@ -368,20 +380,31 @@ html(lang="fr" ng-app="paperwork")
                                         return element;
                                     }).size,
 
+                                    items:data.cells.find(function(element){
+                                        if(element.id == source)
+                                        return element;
+                                    }).items,
+
                                     name:data.cells.find(function(element){
                                         if(element.id == source)
                                         return element;
                                     }).name,
+
+                                    fns:data.cells.find(function(element){
+                                        if(element.id == source)
+                                        return element;
+                                    }).fns,
                                 });
                                 graph.addCells([el1]);
                                 link.source(el1);
                                 done.push(el1);
+                                
                             }
 
                             if(targetflag){
                                 link.target(target);
                             }else{
-                                var el2 = new joint.shapes.html.Element({
+                                var el2 = new joint.shapes.class.Element({
                                     id:target,
                                     position: data.cells.find(function(element){
                                         if(element.id == target)
@@ -393,6 +416,11 @@ html(lang="fr" ng-app="paperwork")
                                         return element;
                                     }).size,
 
+                                    items:data.cells.find(function(element){
+                                        if(element.id == target)
+                                        return element;
+                                    }).items,
+
                                     name:data.cells.find(function(element){
                                         if(element.id == target)
                                         return element;
@@ -401,6 +429,7 @@ html(lang="fr" ng-app="paperwork")
                                 graph.addCells([el2]);
                                 link.target(el2);
                                 done.push(el2);
+                                console.log(el2);
                             }
                             link.addTo(graph);
                         }

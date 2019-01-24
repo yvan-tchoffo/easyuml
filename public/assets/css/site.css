@@ -162,10 +162,14 @@ a.desc:after {
     position: absolute;
 }
 
-.class-item input{
+.class-item textarea{
     pointer-events: auto;
+    max-width: 167px;
+    min-width: 167px;
+    min-height: 71px;
+    padding-top:0;
+    margin-bottom:-1.6px;
 }
-
 
 #holder{
     position: relative;
@@ -179,6 +183,7 @@ a.desc:after {
 .class-name input{
     cursor: all-scroll;
     pointer-events: none;
+    width: 167px;
 }
 
 .tools i{
