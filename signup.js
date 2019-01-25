@@ -14,7 +14,6 @@ router.get('/',function(req,res,next){
         res.redirect('../');
     }else{
         res.render("signup/index",{data:""});
-        next();
     }
 });
 router.post('/',function(req,res,next){
@@ -24,17 +23,18 @@ router.post('/',function(req,res,next){
     db.query("select * from user where login=?",[req.body.login],function(err,rows,fields){
         if(rows.length){
             res.render("signup/index",{msg:"Ce nom d'utilisateur est déja pris",data:req.body})
+        }else{
+            db.query("insert into user (nom,prenom,mail,pwd,login) values(?,?,?,?,?)",[req.body.nom,req.body.prenom,req.body.mail,req.body.pwd,req.body.login],function(err,result,fiels){
+                if(err)
+                console.log(err);
+                else{
+                    req.session.user=req.body;
+                    req.session.user.id=result.insertId;
+                    res.redirect('/');
+                }
+            })
         }
         
-    })
-    db.query("insert into user (nom,prenom,mail,pwd,login) values(?,?,?,?,?)",[req.body.nom,req.body.prenom,req.body.mail,req.body.pwd,req.body.login],function(err,result,fiels){
-        if(err)
-        console.log(err);
-        else{
-            req.session.user=req.body;
-            req.session.user.id=result.insertId;
-            res.redirect('/');
-        }
     })
 });
 module.exports = router;
