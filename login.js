@@ -9,7 +9,7 @@ var upload = multer();
 router.use(bodyParser.json()); 
 router.use(bodyParser.urlencoded({ extended: true })); 
 router.use(upload.array()); 
-//***Connexion des utilisateurs
+
 router.get('/',function(req,res,next){
     if(req.session.user){
         res.redirect('../');
