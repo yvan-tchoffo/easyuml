@@ -1,3 +1,4 @@
+//** importations
 var session = require('express-session');
 var db = require('./db/db.js');
 var express = require('express');
@@ -50,18 +51,18 @@ app.get('/signup',function(req,res,next){
 app.post('/save',checkSignIn,function(req,res,next){
     id = req.session.user.id;
     if(req.body.newdia != -1){
-        db.query("update diagramme set content = ? where id = ? ",[req.body.data,req.session.diagramme],function(err,result,next){
+        db.query("UPDATE diagramme SET CONTENT = ? WHERE id = ? ",[req.body.data,req.session.diagramme],function(err,result,next){
             if(err)
                 res.send(err);
             res.send("ok");
         })
     }else{
-        db.query("select * from diagramme where nom = ? and user_id = ?",[req.body.name,id],function(err,rows,next){
+        db.query("SELECT * FROM diagramme WHERE nom = ? and user_id = ?",[req.body.name,id],function(err,rows,next){
             if(rows.length){
                 res.send("double");
             }
             else{
-                db.query("insert into diagramme(nom,date,user_id,content) values (?,now(),?,?)",[req.body.name,id,req.body.data],function(err,result,next){
+                db.query("INSERT INTO diagramme(nom,date,user_id,content) VALUES (?,now(),?,?)",[req.body.name,id,req.body.data],function(err,result,next){
                     if(err)
                         res.send(err);
                     else
