@@ -103,6 +103,7 @@ html(lang="fr" ng-app="paperwork")
                 var linkflag = false;
                 var extendflag = false;
                 var agregateflag = false;
+                var deleteflag = false;
                 var activecolor = "color:red;";
                 var passivecolor = "color:#97a0b3;"
 
@@ -180,11 +181,17 @@ html(lang="fr" ng-app="paperwork")
 
                     }
 
+                    if(deleteflag){
+                        cellView.model.remove();
+                    }
+
                 });
 
                 paper.on('link:pointerdblclick',function(cellView){
-                    var label = prompt("Entrez le nom de la relation");
-                    cellView.model.label(0,{ attrs: { label: { text: label } } });
+                    if(cellView.model.attributes.type==="custom.links.Normal"){
+                        var label = prompt("Entrez le nom de la relation");
+                        cellView.model.label(0,{ attrs: { label: { text: label } } });
+                    }
                 })
                     
                 paper.on('cell:pointerdblclick', function(cellView) {
@@ -384,7 +391,15 @@ html(lang="fr" ng-app="paperwork")
                 };
 
                 paperwork.delete=function($event){
-                    document.getElementById("delete").style=activecolor;
+                    //- console.log(deleteflag)
+                    if(deleteflag){
+                        deleteflag =false;
+                        document.getElementById("delete").style=passivecolor;
+                    }else{
+                        document.getElementById("delete").style = activecolor;
+                        deleteflag = true;
+                    }
+                    
                 }
 
                 paperwork.addclass=function($event){
@@ -403,7 +418,7 @@ html(lang="fr" ng-app="paperwork")
 
                 paperwork.addlink=function($event){
                     if(linkflag){
-                        linkflag != linkflag;
+                        linkflag = false;
                         document.getElementById("newlink").style=passivecolor;
                     }
                     else{
@@ -415,7 +430,7 @@ html(lang="fr" ng-app="paperwork")
 
                 paperwork.addExtend=function($event){
                     if(extendflag){
-                        extendflag != extendflag;
+                        extendflag = false;
                         document.getElementById("extend").style=passivecolor;
                     }
                     else{
@@ -426,7 +441,7 @@ html(lang="fr" ng-app="paperwork")
 
                 paperwork.addAgregate=function($event){
                     if(agregateflag){
-                        agregateflag != agregateflag;
+                        agregateflag = false;
                         document.getElementById("agregate").style=passivecolor;
                     }
                     else{
@@ -534,12 +549,41 @@ html(lang="fr" ng-app="paperwork")
                                         if(element.id == target)
                                             return element;
                                         }).name,
+                                    
+                                    fns:data.cells.find(function(element){
+                                        if(element.id == target)
+                                        return element;
+                                    }).fns,
                                     });
                                     graph.addCells([el2]);
                                     link.target(el2);
                                     done.push(el2);
                             }
                                 link.addTo(graph);
+                        }
+                        if(cell.type=="class.Element"){
+                            var flag = false;
+                            for(i=0;i!=done.length;i++){
+                                if(done[i].id == cell.id){
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if(!flag){
+                                 var el = new joint.shapes.class.Element({
+                                    id:cell.id,
+                                    position: cell.position,
+
+                                    size: cell.size,
+
+                                    items:cell.items,
+
+                                    name:cell.name,
+
+                                    fns: cell.fns,
+                                });
+                                graph.addCells([el]);
+                            }
                         }
                         
                         
