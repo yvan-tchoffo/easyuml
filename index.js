@@ -1,13 +1,14 @@
-var express = require('express');
-var app = express();
-var db = require('./db/db.js');
 var session = require('express-session');
+var db = require('./db/db.js');
+var express = require('express');
 var login = require('./login.js');
-var signup = require('./signup.js');
+var app = express();
+var upload = multer();
 var logout = require('./logout.js');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var upload = multer();
+var signup = require('./signup.js');
+
 
 app.set('view engine', 'pug');
 app.set('views','./views');
@@ -35,7 +36,6 @@ function checkSignIn(req, res,next){
         res.redirect('/login');
     }
  }
-
 app.get('/',checkSignIn,function(req,res,next){
     data = db.query("select * from diagramme where user_id = ?",[req.session.user.id],function(err,rows,fields){
         res.render('app/dashboard',{data: rows, user:req.session.user});
@@ -92,6 +92,5 @@ app.get('/open/:id',checkSignIn,function(req,res,next){
         res.render("app/paperwork",{newdia:0, data:JSON.stringify(rows[0].content), user:req.session.user});
     });
 });
-
 
 app.listen(3000);
