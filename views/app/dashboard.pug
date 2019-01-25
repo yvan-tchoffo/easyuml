@@ -17,7 +17,7 @@ html(lang="fr" ng-app="dashboard")
     body(class="skin-purple sidebar-mini")
         div(class="wrapper")
         header(class="main-header")
-            a(href="#" class="logo")
+            a(href="/" class="logo")
                 span(class="logo-mini")
                     b E
                     small uml
@@ -25,16 +25,10 @@ html(lang="fr" ng-app="dashboard")
                     b Easy
                     |UML
             nav(class="navbar navbar-static-top")
-                a(href="#" class="sidebar-toggle" data-toggle="push-menu" role="button")
-                    span(class="sr-only") Toggle navigation
                 div(class="navbar-custom-menu")
                     ul(class="nav navbar-nav")
                         li(class="dropdown user user-menu")
-        aside(class="main-sidebar")
-            section(class="sidebar")
-                ul(class="sidebar-menu" data-widget="tree")
-                    li(class="header") NAVIGATION
-        div(class="content-wrapper")
+        div(class="content-wrapper" style="margin-left:0px;")
             section.content-header
                 h1 Vos diagrammes
             section.content(ng-controller = "dashboardController as dashboard")
@@ -58,8 +52,8 @@ html(lang="fr" ng-app="dashboard")
                     a(href='/add')
                         button(type="button" class="btn  btn-success btn-lg center-block" )
                             i(class="fa fa-plus") 
-                            span Nouveau diagramme
-        footer(class="main-footer")
+                            span  Nouveau diagramme
+        footer(class="main-footer" style="margin-left:0px;")
             div(class="pull-right hidden-xs")
                 b Version
                 span  1.0.0

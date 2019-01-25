@@ -39,7 +39,7 @@ app.get('/signup',function(req,res,next){
     res.redirect('/signup');
 });
 
-app.post('/save',function(req,res,next){
+app.post('/save',checkSignIn,function(req,res,next){
     id = req.session.user.id;
     console.log(id);
     if(req.body.newdia != -1){
@@ -61,11 +61,11 @@ app.post('/save',function(req,res,next){
     }
 })
 
-app.get('/add',function(req,res,next){
+app.get('/add',checkSignIn,function(req,res,next){
     res.render("app/paperwork",{newdia:-1,data:-1});
 });
 
-app.post('/delete',function(req,res,next){
+app.post('/delete',checkSignIn,function(req,res,next){
     db.query("delete from diagramme where id = ?",[req.body.data],function(err,result,next){
         if(err)
             res.send("false");
@@ -74,7 +74,7 @@ app.post('/delete',function(req,res,next){
     })
 });
 
-app.get('/open/:id',function(req,res,next){
+app.get('/open/:id',checkSignIn,function(req,res,next){
     db.query("select * from diagramme where id=?",[req.params.id],function(err,rows,fields){
         req.session.diagramme = req.params.id;
         res.render("app/paperwork",{newdia:0, data:JSON.stringify(rows[0].content)});

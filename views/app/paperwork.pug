@@ -52,10 +52,13 @@ html(lang="fr" ng-app="paperwork")
                                                 i(class="ion-ios-plus-empty")
                                         th      
                                             button(class="btn btn-box-tool" ng-click="paperwork.addlink($event)" title="Nouvelle relation" type="button") 
-                                                i(class="ion-android-arrow-forward" id="newlink")
+                                                i(class="ion-ios-minus-empty" id="newlink")
                                         th
-                                            button(class="btn btn-box-tool" title="Héritage" type="button") 
-                                                i(class="icon ion-arrow-right-b")
+                                            button(class="btn btn-box-tool" title="Héritage" ng-click="paperwork.addExtend($event)" type="button") 
+                                                i(class="icon ion-arrow-right-b" id="extend")
+                                        th      
+                                            button(class="btn btn-box-tool" ng-click="paperwork.addAgregate($event)" title="Agregation" type="button") 
+                                                i(class="ion-android-arrow-forward" id="agregate")
                                         th
                                             button(class="btn btn-box-tool" ng-click="paperwork.delete($event)" title="Supprimer un élément" type="button") 
                                                 i(class="ion-android-delete" id="delete")
@@ -63,6 +66,7 @@ html(lang="fr" ng-app="paperwork")
                                         td Nouvelle classe
                                         td Nouvelle relation
                                         td Héritage
+                                        td Agregation
                                         td Supprimer un élément 
                 section.content()
                     div#holder(class="petitcarreau")
@@ -97,6 +101,8 @@ html(lang="fr" ng-app="paperwork")
                 var startlink = "no";
                 var endlink = "no";
                 var linkflag = false;
+                var extendflag = false;
+                var agregateflag = false;
                 var activecolor = "color:red;";
                 var passivecolor = "color:#97a0b3;"
 
@@ -127,10 +133,46 @@ html(lang="fr" ng-app="paperwork")
                                     }
                                 }
                             });
-                            console.log(link);
                             link.addTo(graph);
                             linkflag = false;
                             document.getElementById("newlink").style=passivecolor;
+                            startlink = "no";
+                            endlink = "no";
+
+                        }
+
+                    }
+                    if(extendflag){
+                        if(startlink == "no"){
+                            startlink = cellView.model;
+                        }
+                        else{
+                            endlink = cellView.model;
+                            var link = new joint.shapes.custom.links.Extend();
+                            link.source(startlink);
+                            link.target(endlink);
+                            link.addTo(graph);
+                            extendflag = false;
+                            document.getElementById("extend").style=passivecolor;
+                            startlink = "no";
+                            endlink = "no";
+
+                        }
+
+                    }
+
+                    if(agregateflag){
+                        if(startlink == "no"){
+                            startlink = cellView.model;
+                        }
+                        else{
+                            endlink = cellView.model;
+                            var link = new joint.shapes.custom.links.Agregate();
+                            link.source(startlink);
+                            link.target(endlink);
+                            link.addTo(graph);
+                            extendflag = false;
+                            document.getElementById("agregate").style=passivecolor;
                             startlink = "no";
                             endlink = "no";
 
@@ -154,7 +196,7 @@ html(lang="fr" ng-app="paperwork")
 
                 paper.on('blank:pointerclick', function() {
                         $("textarea").blur();
-                        $("focus").blur();
+                        $("input").blur();
                 });
 
 
@@ -240,7 +282,7 @@ html(lang="fr" ng-app="paperwork")
                             stroke: 'black',
                             strokeWidth: 2,
                             targetMarker: {
-                                'type': 'path',
+                                'type': 'none',
                                 'width': 10,
                                 'height': 20,
                                 'y': -10,
@@ -277,6 +319,42 @@ html(lang="fr" ng-app="paperwork")
                             }
                         }
                     }
+                }, {
+                    // inherit joint.shapes.standard.Link.markup
+                });
+
+                 joint.shapes.standard.Link.define('custom.links.Extend', {
+                    attrs: {
+                        line: {
+                            stroke: 'black',
+                            strokeWidth: 1,
+                            targetMarker: {
+                                'type': 'path',
+                                'fill':'white',
+                                'width': 20,
+                                'height': 20,
+                                'y': -10,
+                            }
+                        }
+                    },
+                }, {
+                    // inherit joint.shapes.standard.Link.markup
+                });
+
+                joint.shapes.standard.Link.define('custom.links.Agregate', {
+                    attrs: {
+                        line: {
+                            stroke: 'black',
+                            strokeWidth: 1,
+                            targetMarker: {
+                                'type': 'path',
+                                'fill':'black',
+                                'width': 20,
+                                'height': 20,
+                                'y': -10,
+                            }
+                        }
+                    },
                 }, {
                     // inherit joint.shapes.standard.Link.markup
                 });
@@ -335,6 +413,28 @@ html(lang="fr" ng-app="paperwork")
 
                 };
 
+                paperwork.addExtend=function($event){
+                    if(extendflag){
+                        extendflag != extendflag;
+                        document.getElementById("extend").style=passivecolor;
+                    }
+                    else{
+                        document.getElementById("extend").style = activecolor;
+                        extendflag = true;
+                    }
+                };
+
+                paperwork.addAgregate=function($event){
+                    if(agregateflag){
+                        agregateflag != agregateflag;
+                        document.getElementById("agregate").style=passivecolor;
+                    }
+                    else{
+                        document.getElementById("agregate").style = activecolor;
+                        agregateflag = true;
+                    }
+                };
+
 
                 var data =!{data};
                 if(data != -1){
@@ -342,17 +442,26 @@ html(lang="fr" ng-app="paperwork")
                     done = [];
                     for(var j = 0; j!=data.cells.length; j++){
                         cell = data.cells[j];
-                        if(cell.type == "custom.links.Normal"){
-                            var link = new joint.shapes.custom.links.Normal();
+                        var link = null;
+                        if(cell.type!=="class.Element"){
+                            if(cell.type == "custom.links.Normal"){
+                                link = new joint.shapes.custom.links.Normal();
+                                link.appendLabel({
+                                    attrs:{
+                                        label:{
+                                            text:cell.labels[0].attrs.label.text
+                                        }
+                                    }
+                                });
+                            }
+                            if(cell.type == "custom.links.Extend"){
+                                link = new joint.shapes.custom.links.Extend();
+                            }
+                            if(cell.type == "custom.links.Agregate"){
+                                link = new joint.shapes.custom.links.Agregate();
+                            }
                             var source = cell.source.id;
                             var target = cell.target.id;
-                            link.appendLabel({
-                                attrs:{
-                                    label:{
-                                        text:cell.labels[0].attrs.label.text
-                                    }
-                                }
-                            })
                             var sourceflag = false;
                             var targetflag = false;
                             for(i=0;i!=done.length;i++){
@@ -423,16 +532,17 @@ html(lang="fr" ng-app="paperwork")
 
                                     name:data.cells.find(function(element){
                                         if(element.id == target)
-                                        return element;
-                                    }).name,
-                                });
-                                graph.addCells([el2]);
-                                link.target(el2);
-                                done.push(el2);
-                                console.log(el2);
+                                            return element;
+                                        }).name,
+                                    });
+                                    graph.addCells([el2]);
+                                    link.target(el2);
+                                    done.push(el2);
                             }
-                            link.addTo(graph);
+                                link.addTo(graph);
                         }
+                        
+                        
                         
                     }
 

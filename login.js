@@ -14,15 +14,20 @@ router.get('/',function(req,res,next){
     if(req.session.user){
         res.redirect('../');
     }else{
-        res.render("connection/index");
+        res.render("connection/index",{msg:""});
         next();
     }
 });
 
 router.post('/',function(req,res,next){
     db.query("select * from user where login =  ? and pwd = ?",[req.body.login,req.body.password],function(err,rows,fields){
-        req.session.user = rows[0];
-        res.redirect('/');
+        if(rows.length){
+            req.session.user = rows[0];
+            res.redirect('/');
+        }else{
+            res.render("connection/index",{msg:"Nom d'utilisateur ou mot de passe incorrecte"})
+        }
+        
     });
 
 });
