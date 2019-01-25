@@ -291,6 +291,8 @@ html(lang="fr" ng-app="paperwork")
                 });
 
                 joint.shapes.standard.Link.define('custom.links.Normal', {
+                    router: { name: 'manhattan' },
+                    connector: { name: 'rounded' },
                     attrs: {
                         line: {
                             stroke: 'black',
@@ -338,6 +340,8 @@ html(lang="fr" ng-app="paperwork")
                 });
 
                  joint.shapes.standard.Link.define('custom.links.Extend', {
+                    router: { name: 'manhattan' },
+                    connector: { name: 'rounded' },
                     attrs: {
                         line: {
                             stroke: 'black',
@@ -356,6 +360,8 @@ html(lang="fr" ng-app="paperwork")
                 });
 
                 joint.shapes.standard.Link.define('custom.links.Agregate', {
+                    router: { name: 'manhattan' },
+                    connector: { name: 'rounded' },
                     attrs: {
                         line: {
                             stroke: 'black',
