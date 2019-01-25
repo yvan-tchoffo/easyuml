@@ -27,7 +27,10 @@ html(lang="fr" ng-app="dashboard")
             nav(class="navbar navbar-static-top")
                 div(class="navbar-custom-menu")
                     ul(class="nav navbar-nav")
-                        li(class="dropdown user user-menu")
+                        li
+                            a(href="/logout") Déconnexion (
+                                span=user.login
+                                |)
         div(class="content-wrapper" style="margin-left:0px;")
             section.content-header
                 h1 Vos diagrammes

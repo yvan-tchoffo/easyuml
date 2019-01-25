@@ -29,15 +29,22 @@ html(lang="fr" ng-app="paperwork")
                         span(class="sr-only") Toggle navigation
                     div(class="navbar-custom-menu")
                         ul(class="nav navbar-nav")
-                            li(class="dropdown user user-menu")
+                            li
+                                a(href="/logout") Déconnexion (
+                                    span=user.login
+                                    |)
             aside(class="main-sidebar")
                 section(class="sidebar")
                     ul(class="sidebar-menu" data-widget="tree")
                         li(class="header") NAVIGATION
                         li
-                            a(href="#") Liste de vos diagrammes
+                            a(href="/")
+                                i(class="fa fa-list")
+                                span Liste de vos diagrammes
                         li
-                            a(href="#") Déconnexion
+                            a(href="/logout") 
+                                i(class="fa fa-power-off")
+                                span Déconnexion
 
             div(class="content-wrapper")
                 section.content-header
@@ -372,7 +379,6 @@ html(lang="fr" ng-app="paperwork")
                     var name="";
                     if(newdia == -1){
                         name = prompt("Entrez le nom de votre de diagramme");
-                        $event.target.lastChild.value = 0;
                     }
                     var jsonobject = graph.toJSON();
                     var jsonstring = JSON.stringify(jsonobject);
@@ -382,16 +388,21 @@ html(lang="fr" ng-app="paperwork")
                         data:{"data":jsonstring,"newdia":newdia,"name":name},
                         url:"/save"
                     }).then(function mySuccess(response){
-                            console.log(response);
+                            if(response.data=="double"){
+                                alert("Il existe deja un diagramme du même nom. Veuillez changer de nom");
+                                return;
+                            }
                             alert("Sauvegarde réussie");
-                            newdia=0;
+                            $event.target.lastChild.value = 0;
+                            if(newdia == -1)
+                                window.location.href="/open/"+response.data.id;
                         }, function myError(response) {
                             console.log(response);
+                            alert("Une erreur s'est produite");
                     });
                 };
 
                 paperwork.delete=function($event){
-                    //- console.log(deleteflag)
                     if(deleteflag){
                         deleteflag =false;
                         document.getElementById("delete").style=passivecolor;
