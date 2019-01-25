@@ -79,7 +79,7 @@ app.get('/add',checkSignIn,function(req,res,next){
 });
 
 app.post('/delete',checkSignIn,function(req,res,next){
-    db.query("delete from diagramme where id = ?",[req.body.data],function(err,result,next){
+    db.query("DELETE FROM diagramme where id = ?",[req.body.data],function(err,result,next){
         if(err)
             res.send("false");
         else
@@ -88,10 +88,9 @@ app.post('/delete',checkSignIn,function(req,res,next){
 });
 
 app.get('/open/:id',checkSignIn,function(req,res,next){
-    db.query("select * from diagramme where id=?",[req.params.id],function(err,rows,fields){
+    db.query("SELECT * FROM diagramme WHERE id=?",[req.params.id],function(err,rows,fields){
         req.session.diagramme = req.params.id;
-        res.render("app/paperwork",{newdia:0, data:JSON.stringify(rows[0].content), user:req.session.user});
-    });
+        res.render("app/paperwork",{newdia:0, data:JSON.stringify(rows[0].content), user:req.session.user});});
 });
 
 app.listen(3000);
