@@ -9,7 +9,7 @@ var upload = multer();
 router.use(bodyParser.json()); 
 router.use(bodyParser.urlencoded({ extended: true })); 
 router.use(upload.array()); 
-
+//***Connexion des utilisateurs
 router.get('/',function(req,res,next){
     if(req.session.user){
         res.redirect('../');
@@ -18,7 +18,7 @@ router.get('/',function(req,res,next){
         next();
     }
 });
-
+//**consulation de la table des utilisateurs
 router.post('/',function(req,res,next){
     db.query("select * from user where login =  ? and pwd = ?",[req.body.login,req.body.password],function(err,rows,fields){
         if(rows.length){
